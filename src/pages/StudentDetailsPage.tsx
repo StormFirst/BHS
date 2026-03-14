@@ -134,18 +134,6 @@ export default function StudentDetailsPage() {
               {fieldLabel('Jinsi', (student.gender ?? '').trim() || '-')}
 
               {fieldLabel("Tug'ilgan sana", student.birthDate ?? '-')}
-              {fieldLabel('Bo‘y (sm)', Number.isFinite(student.heightCm) ? String(student.heightCm) : '-')}
-              {fieldLabel('Vazn (kg)', Number.isFinite(student.weightKg) ? String(student.weightKg) : '-')}
-
-              {fieldLabel('Ko‘rish (o‘ng/chap)', student.vision ?? '-')}
-              {fieldLabel('Gemoglobin (g/L)', Number.isFinite(student.hemoglobinGL) ? String(student.hemoglobinGL) : '-')}
-            </div>
-
-            <div className="mt-5">
-              <div className="text-xs font-medium text-slate-500">Kasallik tarixi (oxirgi 3 oy)</div>
-              <div className="mt-1 whitespace-pre-wrap text-sm text-slate-900">
-                {(student.diseaseHistory3m ?? '').trim() || '-'}
-              </div>
             </div>
           </div>
         </div>

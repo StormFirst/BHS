@@ -37,10 +37,7 @@ export default function StudentsListPage() {
         last.length > 0 &&
         email.length > 0 &&
         cls.length > 0 &&
-        Number.isFinite(s.age) &&
-        Number.isFinite(s.heightCm) &&
-        Number.isFinite(s.weightKg) &&
-        Number.isFinite(s.hemoglobinGL)
+        Number.isFinite(s.age)
       )
     })
   }, [students])
@@ -91,9 +88,6 @@ export default function StudentsListPage() {
                 <th className="px-4 py-3 font-medium">Sinfi</th>
                 <th className="px-4 py-3 font-medium">Yosh</th>
                 <th className="px-4 py-3 font-medium">Tug'ilgan sana</th>
-                <th className="px-4 py-3 font-medium">Bo‘y / Vazn</th>
-                <th className="px-4 py-3 font-medium">Ko‘rish</th>
-                <th className="px-4 py-3 font-medium">Gemoglobin</th>
                 <th className="px-4 py-3 font-medium">Amallar</th>
               </tr>
             </thead>
@@ -130,14 +124,6 @@ export default function StudentsListPage() {
                   <td className="px-4 py-3 text-slate-700">{s.className ?? '-'}</td>
                   <td className="px-4 py-3 text-slate-700">{Number.isFinite(s.age) ? s.age : '-'}</td>
                   <td className="px-4 py-3 text-slate-700">{s.birthDate ?? '-'}</td>
-                  <td className="px-4 py-3 text-slate-700">
-                    {Number.isFinite(s.heightCm) ? s.heightCm : '-'} sm /{' '}
-                    {Number.isFinite(s.weightKg) ? s.weightKg : '-'} kg
-                  </td>
-                  <td className="px-4 py-3 text-slate-700">{s.vision ?? '-'}</td>
-                  <td className="px-4 py-3 text-slate-700">
-                    {Number.isFinite(s.hemoglobinGL) ? s.hemoglobinGL : '-'} g/L
-                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <button

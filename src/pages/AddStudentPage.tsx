@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { User } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { addStudent, uploadStudentPhoto, type StudentInput } from '../lib/firebase'
@@ -25,33 +25,16 @@ export default function AddStudentPage({ user }: Props) {
   const [className, setClassName] = useState('')
   const [birthDate, setBirthDate] = useState('')
 
-  const [heightCm, setHeightCm] = useState('')
-  const [weightKg, setWeightKg] = useState('')
-  const [visionRight, setVisionRight] = useState('')
-  const [visionLeft, setVisionLeft] = useState('')
-  const [hemoglobinGL, setHemoglobinGL] = useState('')
-  const [diseaseHistory3m, setDiseaseHistory3m] = useState('')
-
   const [photoFile, setPhotoFile] = useState<File | null>(null)
 
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const vision = useMemo(() => {
-    const r = visionRight.trim()
-    const l = visionLeft.trim()
-    if (!r && !l) return ''
-    return `${r || '-'} / ${l || '-'}`
-  }, [visionRight, visionLeft])
 
   async function handleSubmit() {
     setSubmitting(true)
     setError(null)
     try {
       const parsedAge = Number(age)
-      const parsedHeight = Number(heightCm)
-      const parsedWeight = Number(weightKg)
-      const parsedHemo = Number(hemoglobinGL)
 
       if (!firstName.trim() || !lastName.trim()) {
         throw new Error('Ism va familiya majburiy')
@@ -71,18 +54,6 @@ export default function AddStudentPage({ user }: Props) {
       if (!birthDate) {
         throw new Error("Tug'ilgan sana majburiy")
       }
-      if (!Number.isFinite(parsedHeight) || parsedHeight <= 0) {
-        throw new Error("Bo‘y (sm) to‘g‘ri kiritilmadi")
-      }
-      if (!Number.isFinite(parsedWeight) || parsedWeight <= 0) {
-        throw new Error('Vazn (kg) to‘g‘ri kiritilmadi')
-      }
-      if (!vision.trim()) {
-        throw new Error("Ko‘rish qobiliyati (o‘ng/chap) majburiy")
-      }
-      if (!Number.isFinite(parsedHemo) || parsedHemo <= 0) {
-        throw new Error('Gemoglobin (g/L) to‘g‘ri kiritilmadi')
-      }
 
       let photoUrl: string | null = null
       if (photoFile) {
@@ -98,11 +69,6 @@ export default function AddStudentPage({ user }: Props) {
         className: className.trim(),
         birthDate,
         photoUrl,
-        heightCm: parsedHeight,
-        weightKg: parsedWeight,
-        vision: vision.trim(),
-        hemoglobinGL: parsedHemo,
-        diseaseHistory3m: diseaseHistory3m.trim(),
       }
 
       await addStudent(payload, user)
@@ -203,64 +169,6 @@ export default function AddStudentPage({ user }: Props) {
           </div>
 
           <div>
-            <div className="text-sm font-medium">Bo‘y (sm)</div>
-            <input
-              className={inputClassName(submitting)}
-              type="number"
-              inputMode="decimal"
-              value={heightCm}
-              onChange={(e) => setHeightCm(e.target.value)}
-              disabled={submitting}
-            />
-          </div>
-
-          <div>
-            <div className="text-sm font-medium">Vazn (kg)</div>
-            <input
-              className={inputClassName(submitting)}
-              type="number"
-              inputMode="decimal"
-              value={weightKg}
-              onChange={(e) => setWeightKg(e.target.value)}
-              disabled={submitting}
-            />
-          </div>
-
-          <div>
-            <div className="text-sm font-medium">Ko‘rish qobiliyati (o‘ng ko‘z)</div>
-            <input
-              className={inputClassName(submitting)}
-              placeholder="Masalan: 1.0"
-              value={visionRight}
-              onChange={(e) => setVisionRight(e.target.value)}
-              disabled={submitting}
-            />
-          </div>
-
-          <div>
-            <div className="text-sm font-medium">Ko‘rish qobiliyati (chap ko‘z)</div>
-            <input
-              className={inputClassName(submitting)}
-              placeholder="Masalan: 0.8"
-              value={visionLeft}
-              onChange={(e) => setVisionLeft(e.target.value)}
-              disabled={submitting}
-            />
-          </div>
-
-          <div>
-            <div className="text-sm font-medium">Gemoglobin (g/L)</div>
-            <input
-              className={inputClassName(submitting)}
-              type="number"
-              inputMode="decimal"
-              value={hemoglobinGL}
-              onChange={(e) => setHemoglobinGL(e.target.value)}
-              disabled={submitting}
-            />
-          </div>
-
-          <div>
             <div className="text-sm font-medium">Rasm (Storage)</div>
             <input
               className="block w-full text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:text-white hover:file:bg-slate-800"
@@ -270,20 +178,6 @@ export default function AddStudentPage({ user }: Props) {
               disabled={submitting}
             />
           </div>
-        </div>
-
-        <div className="mt-4">
-          <div className="text-sm font-medium">Kasallik tarixi (oxirgi 3 oy)</div>
-          <textarea
-            className={[
-              'mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500',
-              submitting ? 'opacity-60' : '',
-            ].join(' ')}
-            rows={4}
-            value={diseaseHistory3m}
-            onChange={(e) => setDiseaseHistory3m(e.target.value)}
-            disabled={submitting}
-          />
         </div>
 
         {error ? (

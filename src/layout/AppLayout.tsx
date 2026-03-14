@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
 import type { User } from 'firebase/auth'
 
 type Props = {
@@ -31,11 +32,58 @@ export default function AppLayout({ user, onLogout }: Props) {
   const avatarUrl = user.photoURL
   const initials = getInitials(name)
 
+  const location = useLocation()
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const wasStudentsRoute = useRef(false)
+
+  useEffect(() => {
+    const onStudentsRoute = location.pathname.startsWith('/students')
+    if (!wasStudentsRoute.current && onStudentsRoute) {
+      setSidebarOpen(false)
+    }
+    if (wasStudentsRoute.current && !onStudentsRoute) {
+      setSidebarOpen(true)
+    }
+    wasStudentsRoute.current = onStudentsRoute
+  }, [location.pathname])
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
+      {!sidebarOpen ? (
+        <button
+          className="fixed left-4 top-4 z-50 inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white/90 text-slate-700 shadow-sm backdrop-blur hover:bg-white md:left-6 md:top-6"
+          type="button"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Sidebar ochish"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 6h16" />
+            <path d="M4 12h16" />
+            <path d="M4 18h16" />
+          </svg>
+        </button>
+      ) : null}
       <div className="flex min-h-screen">
-        <aside className="sticky top-0 hidden h-screen w-64 shrink-0 self-start overflow-y-auto border-r border-slate-200 bg-white md:block">
-          <div className="p-5">
+        <aside
+          className={[
+            'sticky top-0 hidden h-screen shrink-0 self-start overflow-y-auto overflow-hidden bg-white md:block',
+            'transition-[width] duration-300 ease-in-out',
+            sidebarOpen ? 'w-64 border-r border-slate-200' : 'w-0 border-r-0',
+          ].join(' ')}
+        >
+          <div className="relative p-5">
+            <button
+              className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50"
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Sidebar yopish"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6L6 18" />
+                <path d="M6 6l12 12" />
+              </svg>
+            </button>
+
             <div className="text-base font-semibold">BHS</div>
             <div className="mt-1 text-xs text-slate-500">Boshqaruv paneli</div>
           </div>

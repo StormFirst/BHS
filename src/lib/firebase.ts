@@ -152,11 +152,6 @@ export type Student = {
   className: string
   birthDate: string
   photoUrl: string | null
-  heightCm: number
-  weightKg: number
-  vision: string
-  hemoglobinGL: number
-  diseaseHistory3m: string
   createdAt: Timestamp | null
   createdByUid: string
 }
@@ -170,11 +165,6 @@ export type StudentInput = {
   className: string
   birthDate: string
   photoUrl: string | null
-  heightCm: number
-  weightKg: number
-  vision: string
-  hemoglobinGL: number
-  diseaseHistory3m: string
 }
 
 export type StudentExam = {
