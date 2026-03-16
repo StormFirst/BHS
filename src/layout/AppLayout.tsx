@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import type { User } from 'firebase/auth'
 
@@ -27,6 +27,69 @@ function navClass({ isActive }: { isActive: boolean }) {
   ].join(' ')
 }
 
+type Crumb = {
+  label: string
+  to?: string
+}
+
+function buildBreadcrumbs(pathname: string): Crumb[] {
+  const segments = pathname.split('?')[0]?.split('#')[0]?.split('/').filter(Boolean) ?? []
+  const crumbs: Crumb[] = [{ label: 'Dashboard', to: '/' }]
+
+  if (segments.length === 0) return crumbs
+
+  const [root, a, b, c] = segments
+
+  if (root === 'students') {
+    crumbs.push({ label: "O'quvchilar", to: '/students' })
+
+    if (a === 'new') {
+      crumbs.push({ label: "O'quvchi qo'shish" })
+      return crumbs
+    }
+
+    if (a) {
+      crumbs.push({ label: `O'quvchi: ${a}`, to: `/students/${a}` })
+    }
+
+    if (b === 'exam') {
+      crumbs.push({ label: 'Tekshiruv' })
+      return crumbs
+    }
+
+    if (b === 'exams' && c) {
+      crumbs.push({ label: 'Tekshiruvlar', to: `/students/${a}/exams` })
+      crumbs.push({ label: `Tekshiruv: ${c}` })
+      return crumbs
+    }
+
+    return crumbs
+  }
+
+  if (root === 'nurses') {
+    crumbs.push({ label: 'Hamshiralar', to: '/nurses' })
+
+    if (a === 'new') {
+      crumbs.push({ label: "Hamshira qo'shish" })
+      return crumbs
+    }
+
+    if (a) {
+      crumbs.push({ label: `Hamshira: ${a}` })
+      return crumbs
+    }
+
+    return crumbs
+  }
+
+  if (root === 'settings') {
+    crumbs.push({ label: 'Sozlamalar' })
+    return crumbs
+  }
+
+  return crumbs
+}
+
 export default function AppLayout({ user, onLogout }: Props) {
   const name = user.displayName ?? user.email ?? 'User'
   const avatarUrl = user.photoURL
@@ -46,6 +109,8 @@ export default function AppLayout({ user, onLogout }: Props) {
     }
     wasStudentsRoute.current = onStudentsRoute
   }, [location.pathname])
+
+  const breadcrumbs = buildBreadcrumbs(location.pathname)
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -115,6 +180,26 @@ export default function AppLayout({ user, onLogout }: Props) {
               <div className="md:hidden">
                 <div className="text-sm font-semibold">BHS</div>
               </div>
+
+              <nav className="hidden min-w-0 flex-1 md:block" aria-label="Breadcrumb">
+                <ol className="flex min-w-0 items-center gap-2 text-sm text-slate-600">
+                  {breadcrumbs.map((c, idx) => {
+                    const isLast = idx === breadcrumbs.length - 1
+                    return (
+                      <li key={`${c.label}-${idx}`} className="flex min-w-0 items-center gap-2">
+                        {idx > 0 ? <span className="text-slate-300">/</span> : null}
+                        {c.to && !isLast ? (
+                          <Link className="truncate hover:text-slate-900" to={c.to}>
+                            {c.label}
+                          </Link>
+                        ) : (
+                          <span className={['truncate', isLast ? 'text-slate-900' : ''].join(' ')}>{c.label}</span>
+                        )}
+                      </li>
+                    )
+                  })}
+                </ol>
+              </nav>
 
               <div className="ml-auto flex items-center gap-3">
                 <div className="flex items-center gap-3">
