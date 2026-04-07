@@ -29,13 +29,11 @@ export default function StudentsListPage() {
     return students.filter((s) => {
       const first = (s.firstName ?? '').trim()
       const last = (s.lastName ?? '').trim()
-      const email = (s.email ?? '').trim()
       const cls = (s.className ?? '').trim()
 
       return (
         first.length > 0 &&
         last.length > 0 &&
-        email.length > 0 &&
         cls.length > 0 &&
         Number.isFinite(s.age)
       )

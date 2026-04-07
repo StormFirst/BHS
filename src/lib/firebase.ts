@@ -148,7 +148,7 @@ export type Student = {
   lastName: string
   gender: string
   age: number
-  email: string
+  email: string | null
   className: string
   birthDate: string
   photoUrl: string | null
@@ -161,7 +161,7 @@ export type StudentInput = {
   lastName: string
   gender: string
   age: number
-  email: string
+  email: string | null
   className: string
   birthDate: string
   photoUrl: string | null

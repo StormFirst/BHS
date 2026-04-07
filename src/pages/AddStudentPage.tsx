@@ -45,9 +45,6 @@ export default function AddStudentPage({ user }: Props) {
       if (!Number.isFinite(parsedAge) || parsedAge <= 0) {
         throw new Error('Yosh to‘g‘ri kiritilmadi')
       }
-      if (!email.trim()) {
-        throw new Error('Email majburiy')
-      }
       if (!className.trim()) {
         throw new Error('Sinfi majburiy')
       }
@@ -65,7 +62,7 @@ export default function AddStudentPage({ user }: Props) {
         lastName: lastName.trim(),
         gender: gender.trim(),
         age: parsedAge,
-        email: email.trim(),
+        email: email.trim() ? email.trim() : null,
         className: className.trim(),
         birthDate,
         photoUrl,
@@ -136,7 +133,7 @@ export default function AddStudentPage({ user }: Props) {
           </div>
 
           <div>
-            <div className="text-sm font-medium">Email</div>
+            <div className="text-sm font-medium">Email (ixtiyoriy)</div>
             <input
               className={inputClassName(submitting)}
               type="email"
