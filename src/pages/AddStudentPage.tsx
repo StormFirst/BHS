@@ -9,7 +9,7 @@ type Props = {
 
 function inputClassName(disabled?: boolean) {
   return [
-    'w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500',
+    'w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400',
     disabled ? 'opacity-60' : '',
   ].join(' ')
 }
@@ -81,10 +81,10 @@ export default function AddStudentPage({ user }: Props) {
     <div className="grid gap-6">
       <div>
         <h1 className="text-2xl font-semibold">O'quvchi qo'shish</h1>
-        <p className="mt-1 text-sm text-slate-600">Yangi o'quvchi qo'shish</p>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Yangi o'quvchi qo'shish</p>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <div className="text-sm font-medium">Ism</div>
@@ -168,7 +168,7 @@ export default function AddStudentPage({ user }: Props) {
           <div>
             <div className="text-sm font-medium">Rasm (Storage)</div>
             <input
-              className="block w-full text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:text-white hover:file:bg-slate-800"
+              className="block w-full text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:text-white hover:file:bg-slate-800 dark:text-slate-200 dark:file:bg-white dark:file:text-slate-900 dark:hover:file:bg-slate-200"
               type="file"
               accept="image/*"
               onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
@@ -185,7 +185,7 @@ export default function AddStudentPage({ user }: Props) {
 
         <div className="mt-4 flex items-center justify-end gap-2">
           <button
-            className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 disabled:opacity-50"
+            className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950/30 dark:hover:bg-slate-900"
             onClick={() => navigate('/students')}
             disabled={submitting}
           >

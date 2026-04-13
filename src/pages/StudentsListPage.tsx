@@ -64,7 +64,7 @@ export default function StudentsListPage() {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">O'quvchilar ro'yxati</h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
             Jami: <span className="font-medium">{total}</span>
           </p>
         </div>
@@ -77,10 +77,10 @@ export default function StudentsListPage() {
         </Link>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] border-collapse text-left text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 text-slate-700">
+            <thead className="border-b border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-200">
               <tr>
                 <th className="px-4 py-3 font-medium">O'quvchi</th>
                 <th className="px-4 py-3 font-medium">Sinfi</th>
@@ -93,7 +93,7 @@ export default function StudentsListPage() {
               {visibleStudents.map((s) => (
                 <tr
                   key={s.id}
-                  className="cursor-pointer border-b border-slate-100 hover:bg-slate-50 last:border-b-0"
+                  className="cursor-pointer border-b border-slate-100 hover:bg-slate-50 last:border-b-0 dark:border-slate-800/70 dark:hover:bg-slate-900/30"
                   onClick={() => navigate(`/students/${s.id}`)}
                 >
                   <td className="px-4 py-3">
@@ -102,12 +102,12 @@ export default function StudentsListPage() {
                         <img
                           src={s.photoUrl}
                           alt={`${s.firstName} ${s.lastName}`}
-                          className="h-9 w-9 rounded-full border border-slate-200 object-cover"
+                          className="h-9 w-9 rounded-full border border-slate-200 object-cover dark:border-slate-800"
                           loading="lazy"
                           referrerPolicy="no-referrer"
                         />
                       ) : (
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-semibold text-slate-700">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-semibold text-slate-700 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-200">
                           {getInitials(s.firstName, s.lastName)}
                         </div>
                       )}
@@ -115,17 +115,17 @@ export default function StudentsListPage() {
                         <div className="truncate font-medium">
                           {(s.firstName ?? '').trim() || '-'} {(s.lastName ?? '').trim() || ''}
                         </div>
-                        <div className="truncate text-xs text-slate-500">{s.email ?? '-'}</div>
+                        <div className="truncate text-xs text-slate-500 dark:text-slate-400">{s.email ?? '-'}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">{s.className ?? '-'}</td>
-                  <td className="px-4 py-3 text-slate-700">{Number.isFinite(s.age) ? s.age : '-'}</td>
-                  <td className="px-4 py-3 text-slate-700">{s.birthDate ?? '-'}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-200">{s.className ?? '-'}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-200">{Number.isFinite(s.age) ? s.age : '-'}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-200">{s.birthDate ?? '-'}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <button
-                        className="cursor-pointer rounded-md border border-red-200 bg-white px-2.5 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+                        className="cursor-pointer rounded-md border border-red-200 bg-white px-2.5 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50 dark:border-red-900/60 dark:bg-slate-950/30 dark:text-red-300 dark:hover:bg-red-950/30"
                         onClick={(e) => {
                           e.stopPropagation()
                           openDeleteModal(s.id)
@@ -143,11 +143,11 @@ export default function StudentsListPage() {
         </div>
 
         {loading ? (
-          <div className="p-4 text-sm text-slate-600">Loading...</div>
+          <div className="p-4 text-sm text-slate-600 dark:text-slate-300">Loading...</div>
         ) : null}
 
         {!loading && visibleStudents.length === 0 ? (
-          <div className="p-4 text-sm text-slate-600">Hali o'quvchilar yo'q.</div>
+          <div className="p-4 text-sm text-slate-600 dark:text-slate-300">Hali o'quvchilar yo'q.</div>
         ) : null}
       </div>
 
@@ -160,15 +160,15 @@ export default function StudentsListPage() {
               return deletingId ? null : setConfirmDeleteId(null)
             }}
           />
-          <div className="relative w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-lg">
+          <div className="relative w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-lg dark:border-slate-800 dark:bg-slate-950">
             <div className="text-lg font-semibold">O'quvchini o'chirish</div>
-            <div className="mt-2 text-sm text-slate-600">
+            <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
               Rostdan ham o'quvchini o'chirmoqchimisiz? Bu amalni ortga qaytarib bo'lmaydi.
             </div>
 
             <div className="mt-5 flex items-center justify-end gap-2">
               <button
-                className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 disabled:opacity-50"
+                className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950/30 dark:hover:bg-slate-900"
                 onClick={() => setConfirmDeleteId(null)}
                 disabled={Boolean(deletingId)}
               >

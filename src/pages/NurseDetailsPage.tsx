@@ -4,7 +4,7 @@ import { listenNurse, updateNurse, type Nurse, type NurseInput } from '../lib/fi
 
 function inputClassName(disabled?: boolean) {
   return [
-    'w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500',
+    'w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-100 dark:focus:border-indigo-400',
     disabled ? 'opacity-60' : '',
   ].join(' ')
 }
@@ -74,7 +74,7 @@ export default function NurseDetailsPage() {
       <div className="grid gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Hamshira</h1>
-          <p className="mt-1 text-sm text-slate-600">Hamshira ID topilmadi.</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Hamshira ID topilmadi.</p>
         </div>
         <Link className="w-fit rounded-md bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800" to="/nurses">
           Orqaga
@@ -84,7 +84,7 @@ export default function NurseDetailsPage() {
   }
 
   if (loading) {
-    return <div className="text-sm text-slate-600">Loading...</div>
+    return <div className="text-sm text-slate-600 dark:text-slate-300">Loading...</div>
   }
 
   if (!nurse) {
@@ -92,7 +92,7 @@ export default function NurseDetailsPage() {
       <div className="grid gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Hamshira topilmadi</h1>
-          <p className="mt-1 text-sm text-slate-600">Bu hamshira o‘chirilgan yoki mavjud emas.</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Bu hamshira o‘chirilgan yoki mavjud emas.</p>
         </div>
         <Link className="w-fit rounded-md bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800" to="/nurses">
           Orqaga
@@ -106,7 +106,7 @@ export default function NurseDetailsPage() {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">{fullName}</h1>
-          <p className="mt-1 text-sm text-slate-600">Hamshira profili</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Hamshira profili</p>
         </div>
 
         <Link className="w-fit rounded-md bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800" to="/nurses">
@@ -114,27 +114,27 @@ export default function NurseDetailsPage() {
         </Link>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
         <div className="grid gap-4 md:grid-cols-3">
           <div>
-            <div className="text-xs font-medium text-slate-500">Hamshira ID</div>
-            <div className="mt-1 text-sm text-slate-900">{(nurse.nurseId ?? '').trim() || '-'}</div>
+            <div className="text-xs font-medium text-slate-500 dark:text-slate-400">Hamshira ID</div>
+            <div className="mt-1 text-sm text-slate-900 dark:text-slate-100">{(nurse.nurseId ?? '').trim() || '-'}</div>
           </div>
 
           <div className="md:col-span-3" />
 
           <div>
-            <div className="text-xs font-medium text-slate-500">Ism</div>
+            <div className="text-xs font-medium text-slate-500 dark:text-slate-400">Ism</div>
             <input className={inputClassName(saving)} value={firstName} onChange={(e) => setFirstName(e.target.value)} disabled={saving} />
           </div>
 
           <div>
-            <div className="text-xs font-medium text-slate-500">Familiya</div>
+            <div className="text-xs font-medium text-slate-500 dark:text-slate-400">Familiya</div>
             <input className={inputClassName(saving)} value={lastName} onChange={(e) => setLastName(e.target.value)} disabled={saving} />
           </div>
 
           <div>
-            <div className="text-xs font-medium text-slate-500">Yoshi</div>
+            <div className="text-xs font-medium text-slate-500 dark:text-slate-400">Yoshi</div>
             <input
               className={inputClassName(saving)}
               type="number"
@@ -152,7 +152,7 @@ export default function NurseDetailsPage() {
 
         <div className="mt-4 flex items-center justify-end gap-2">
           <button
-            className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 disabled:opacity-50"
+            className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:hover:bg-slate-900"
             disabled={saving}
             type="button"
           >

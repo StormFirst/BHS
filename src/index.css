@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
@@ -12,4 +13,38 @@ body {
 
 body {
   margin: 0;
+}
+
+@layer base {
+  button {
+    @apply transform-gpu transition-all duration-200 ease-out;
+    @apply hover:-translate-y-0.5 hover:shadow-lg;
+    @apply active:translate-y-0 active:scale-[0.98];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2;
+    @apply dark:focus-visible:ring-indigo-400/70 dark:focus-visible:ring-offset-slate-950;
+  }
+
+  button:disabled {
+    @apply cursor-not-allowed hover:translate-y-0 hover:shadow-none;
+  }
+
+  a[class*='rounded-'] {
+    @apply transform-gpu transition-all duration-200 ease-out;
+    @apply hover:-translate-y-0.5 hover:shadow-lg;
+    @apply active:translate-y-0 active:scale-[0.98];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2;
+    @apply dark:focus-visible:ring-indigo-400/70 dark:focus-visible:ring-offset-slate-950;
+  }
+}
+
+@layer components {
+  .glass-card,
+  .rounded-xl.border.border-slate-200.bg-white {
+    @apply border-slate-200/80 bg-white shadow-lg shadow-slate-200/50;
+  }
+
+  .dark .glass-card,
+  .dark .rounded-xl.border.border-slate-200.bg-white {
+    @apply border-white/10 bg-slate-900/45 shadow-black/25 backdrop-blur-xl;
+  }
 }

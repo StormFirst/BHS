@@ -13,6 +13,10 @@ type Section = {
   fields: Field[]
 }
 
+function sectionNoteKey(title: string) {
+  return `${title}__izoh`
+}
+
 const sections: Section[] = [
   {
     title: "1) O'quvchi ma'lumotlari",
@@ -73,28 +77,6 @@ const sections: Section[] = [
       { name: 'Milklar holati' },
       { name: 'Og‘iz gigiyenasi holati' },
       { name: 'Davolash bo‘yicha tavsiya' },
-    ],
-  },
-  {
-    title: '7) Umumiy jismoniy ko‘rik',
-    fields: [
-      { name: 'Shikoyatlar' },
-      { name: 'Teri holati' },
-      { name: 'Limfa tugunlari' },
-      { name: 'O‘pka auskultatsiyasi' },
-      { name: 'Yurak auskultatsiyasi' },
-      { name: 'Qorin bo‘shlig‘i tekshiruvi' },
-      { name: 'Shifokor izohlari' },
-      { name: 'Yo‘llanma kerakmi', note: 'ha/yo‘q' },
-    ],
-  },
-  {
-    title: '8) Qomat va tayanch-harakat apparati tekshiruvi',
-    fields: [
-      { name: 'Skolioz belgilari' },
-      { name: 'Qomat turi' },
-      { name: 'Yassi oyoqlik' },
-      { name: 'Tavsiyalar' },
     ],
   },
   {
@@ -172,7 +154,7 @@ export default function StudentExamDetailsPage() {
       <div className="grid gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Tekshiruv</h1>
-          <p className="mt-1 text-sm text-slate-600">Student ID yoki tekshiruv ID topilmadi.</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Student ID yoki tekshiruv ID topilmadi.</p>
         </div>
         <Link className="w-fit rounded-md bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800" to="/students">
           Orqaga
@@ -186,7 +168,7 @@ export default function StudentExamDetailsPage() {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Tekshiruvni ko‘rish</h1>
-          <p className="mt-1 text-sm text-slate-600">{header}</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{header}</p>
         </div>
 
         <Link className="w-fit rounded-md bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800" to={`/students/${id}`}>
@@ -195,30 +177,30 @@ export default function StudentExamDetailsPage() {
       </div>
 
       {loading ? (
-        <div className="text-sm text-slate-600">Loading...</div>
+        <div className="text-sm text-slate-600 dark:text-slate-300">Loading...</div>
       ) : !exam ? (
-        <div className="text-sm text-slate-600">Tekshiruv topilmadi.</div>
+        <div className="text-sm text-slate-600 dark:text-slate-300">Tekshiruv topilmadi.</div>
       ) : (
         <div className="grid gap-4">
-          {sections.map((section) => (
-            <div key={section.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          {sections.map((section, idx) => (
+            <div key={section.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
               <button
                 type="button"
                 className="flex w-full items-center justify-between gap-3 text-left"
                 onClick={() => toggleSection(section.title)}
               >
                 <div>
-                  <div className="text-base font-semibold">{section.title}</div>
-                  {section.description ? <div className="mt-1 text-sm text-slate-600">{section.description}</div> : null}
+                  <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{`${idx + 1}) ${section.title.replace(/^\d+\)\s*/, '')}`}</div>
+                  {section.description ? <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">{section.description}</div> : null}
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="text-sm text-slate-500">{openSections[section.title] ? 'Yopish' : 'Ochish'}</div>
+                  <div className="text-sm text-slate-500 dark:text-slate-400">{openSections[section.title] ? 'Yopish' : 'Ochish'}</div>
                   <svg
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     className={[
-                      'h-5 w-5 text-slate-500 transition-transform duration-200',
+                      'h-5 w-5 text-slate-500 transition-transform duration-200 dark:text-slate-400',
                       openSections[section.title] ? 'rotate-180' : 'rotate-0',
                     ].join(' ')}
                     aria-hidden="true"
@@ -243,14 +225,21 @@ export default function StudentExamDetailsPage() {
                     {section.fields.map((f) => (
                       <div key={f.name} className="grid gap-1">
                         <div className="flex items-start justify-between gap-4">
-                          <div className="text-sm font-medium text-slate-900">{f.name}</div>
-                          {f.note ? <div className="text-xs text-slate-500">{f.note}</div> : <div />}
+                          <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{f.name}</div>
+                          {f.note ? <div className="text-xs text-slate-500 dark:text-slate-400">{f.note}</div> : <div />}
                         </div>
-                        <div className="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900">
+                        <div className="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-100">
                           {(exam.answers?.[f.name] ?? '').trim() || '-'}
                         </div>
                       </div>
                     ))}
+
+                    <div className="grid gap-1">
+                      <div className="text-sm font-medium text-slate-900 dark:text-slate-100">Izoh</div>
+                      <div className="w-full whitespace-pre-wrap rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-100">
+                        {(exam.answers?.[sectionNoteKey(section.title)] ?? '').trim() || '-'}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -18,6 +18,10 @@ type Section = {
   fields: Field[]
 }
 
+function sectionNoteKey(title: string) {
+  return `${title}__izoh`
+}
+
 const sections: Section[] = [
   {
     title: "1) O'quvchi ma'lumotlari",
@@ -78,28 +82,6 @@ const sections: Section[] = [
       { name: 'Milklar holati' },
       { name: 'Og‘iz gigiyenasi holati' },
       { name: 'Davolash bo‘yicha tavsiya' },
-    ],
-  },
-  {
-    title: '7) Umumiy jismoniy ko‘rik',
-    fields: [
-      { name: 'Shikoyatlar' },
-      { name: 'Teri holati' },
-      { name: 'Limfa tugunlari' },
-      { name: 'O‘pka auskultatsiyasi' },
-      { name: 'Yurak auskultatsiyasi' },
-      { name: 'Qorin bo‘shlig‘i tekshiruvi' },
-      { name: 'Shifokor izohlari' },
-      { name: 'Yo‘llanma kerakmi', note: 'ha/yo‘q' },
-    ],
-  },
-  {
-    title: '8) Qomat va tayanch-harakat apparati tekshiruvi',
-    fields: [
-      { name: 'Skolioz belgilari' },
-      { name: 'Qomat turi' },
-      { name: 'Yassi oyoqlik' },
-      { name: 'Tavsiyalar' },
     ],
   },
   {
@@ -171,6 +153,7 @@ export default function StudentExamPage() {
     const names: string[] = []
     for (const section of sections) {
       for (const f of section.fields) names.push(f.name)
+      names.push(sectionNoteKey(section.title))
     }
     return names
   }, [])
@@ -219,7 +202,7 @@ export default function StudentExamPage() {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Tibbiy tekshiruv</h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
             O'quvchi ID: <span className="font-medium">{id ?? '-'}</span>
           </p>
         </div>
@@ -232,14 +215,14 @@ export default function StudentExamPage() {
         </Link>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
         <div className="grid gap-4">
           <div className="text-base font-semibold">Tekshiruvni saqlash</div>
 
           <div>
-            <div className="text-sm font-medium">Qaysi hamshira tomonidan tekshiruv qilindi</div>
+            <div className="text-sm font-medium text-slate-900 dark:text-slate-100">Qaysi hamshira tomonidan tekshiruv qilindi</div>
             <select
-              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500"
+              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:focus:border-indigo-400"
               value={selectedNurseId}
               onChange={(e) => setSelectedNurseId(e.target.value)}
               disabled={saving || loadingNurses}
@@ -273,27 +256,27 @@ export default function StudentExamPage() {
       </div>
 
       <div className="grid gap-4">
-        {sections.map((section) => (
-          <div key={section.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        {sections.map((section, idx) => (
+          <div key={section.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
             <button
               type="button"
               className="flex w-full items-center justify-between gap-3 text-left"
               onClick={() => toggleSection(section.title)}
             >
               <div>
-                <div className="text-base font-semibold">{section.title}</div>
+                  <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{`${idx + 1}) ${section.title.replace(/^\d+\)\s*/, '')}`}</div>
                 {section.description ? (
-                  <div className="mt-1 text-sm text-slate-600">{section.description}</div>
+                    <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">{section.description}</div>
                 ) : null}
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="text-sm text-slate-500">{openSections[section.title] ? 'Yopish' : 'Ochish'}</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">{openSections[section.title] ? 'Yopish' : 'Ochish'}</div>
                 <svg
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   className={[
-                    'h-5 w-5 text-slate-500 transition-transform duration-200',
+                    'h-5 w-5 text-slate-500 transition-transform duration-200 dark:text-slate-400',
                     openSections[section.title] ? 'rotate-180' : 'rotate-0',
                   ].join(' ')}
                   aria-hidden="true"
@@ -320,17 +303,27 @@ export default function StudentExamPage() {
                   {section.fields.map((f) => (
                     <div key={f.name} className="grid gap-1">
                       <div className="flex items-start justify-between gap-4">
-                        <div className="text-sm font-medium text-slate-900">{f.name}</div>
-                        {f.note ? <div className="text-xs text-slate-500">{f.note}</div> : <div />}
+                        <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{f.name}</div>
+                        {f.note ? <div className="text-xs text-slate-500 dark:text-slate-400">{f.note}</div> : <div />}
                       </div>
                       <input
-                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:focus:border-indigo-400"
                         value={answers[f.name] ?? ''}
                         onChange={(e) => setFieldValue(f.name, e.target.value)}
                         disabled={saving}
                       />
                     </div>
                   ))}
+
+                  <div className="grid gap-1">
+                    <div className="text-sm font-medium text-slate-900 dark:text-slate-100">Izoh</div>
+                    <textarea
+                      className="min-h-24 w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:focus:border-indigo-400"
+                      value={answers[sectionNoteKey(section.title)] ?? ''}
+                      onChange={(e) => setFieldValue(sectionNoteKey(section.title), e.target.value)}
+                      disabled={saving}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

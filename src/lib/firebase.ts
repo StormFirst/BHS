@@ -167,6 +167,16 @@ export type StudentInput = {
   photoUrl: string | null
 }
 
+export type StudentUpdateInput = {
+  firstName: string
+  lastName: string
+  gender: string
+  age: number
+  email: string | null
+  className: string
+  birthDate: string
+}
+
 export type StudentExam = {
   id: string
   nurseId: string | null
@@ -179,6 +189,26 @@ export type StudentExamInput = {
   nurseId: string | null
   nurseName: string
   answers: Record<string, string>
+}
+
+export type StudentIllnessRecord = {
+  id: string
+  nurseId: string | null
+  nurseName: string
+  diseaseName: string
+  visitDate: string
+  treatment: string | null
+  details: string | null
+  createdAt: Timestamp | null
+}
+
+export type StudentIllnessRecordInput = {
+  nurseId: string | null
+  nurseName: string
+  diseaseName: string
+  visitDate: string
+  treatment: string | null
+  details: string | null
 }
 
 export function listenStudents(callback: (students: Student[]) => void) {
@@ -204,6 +234,13 @@ export async function addStudent(input: StudentInput, user: User) {
     ...input,
     createdByUid: user.uid,
     createdAt: serverTimestamp(),
+  })
+}
+
+export async function updateStudent(studentId: string, input: StudentUpdateInput) {
+  const refDoc = doc(db, 'students', studentId)
+  return updateDoc(refDoc, {
+    ...input,
   })
 }
 
@@ -239,6 +276,27 @@ export function listenStudentExam(
 
 export async function addStudentExam(studentId: string, input: StudentExamInput) {
   return addDoc(collection(db, 'students', studentId, 'exams'), {
+    ...input,
+    createdAt: serverTimestamp(),
+  })
+}
+
+export function listenStudentIllnessRecords(
+  studentId: string,
+  callback: (items: StudentIllnessRecord[]) => void,
+) {
+  const q = query(collection(db, 'students', studentId, 'illnessHistory'), orderBy('createdAt', 'desc'))
+  return onSnapshot(q, (snap) => {
+    const items: StudentIllnessRecord[] = snap.docs.map((d) => {
+      const data = d.data() as Omit<StudentIllnessRecord, 'id'>
+      return { id: d.id, ...data }
+    })
+    callback(items)
+  })
+}
+
+export async function addStudentIllnessRecord(studentId: string, input: StudentIllnessRecordInput) {
+  return addDoc(collection(db, 'students', studentId, 'illnessHistory'), {
     ...input,
     createdAt: serverTimestamp(),
   })

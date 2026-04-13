@@ -83,18 +83,18 @@ export default function DashboardPage({ user }: Props) {
     <div className="grid gap-6">
       <div>
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-600">Boshqaruv paneli</p>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Boshqaruv paneli</p>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="text-sm text-slate-600">
-          Xush kelibsiz, <span className="font-medium text-slate-900">{displayName}</span>
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
+        <div className="text-sm text-slate-600 dark:text-slate-300">
+          Xush kelibsiz, <span className="font-medium text-slate-900 dark:text-white">{displayName}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="text-xs font-medium text-slate-500">O'quvchilar</div>
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
+          <div className="text-xs font-medium text-slate-500 dark:text-slate-400">O'quvchilar</div>
           <div className="mt-2 text-3xl font-semibold">{loading ? '-' : studentsCount}</div>
           <div className="mt-3">
             <Link className="text-sm text-indigo-600 hover:text-indigo-500" to="/students">
@@ -103,8 +103,8 @@ export default function DashboardPage({ user }: Props) {
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="text-xs font-medium text-slate-500">Hamshiralar</div>
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
+          <div className="text-xs font-medium text-slate-500 dark:text-slate-400">Hamshiralar</div>
           <div className="mt-2 text-3xl font-semibold">{loading ? '-' : nursesCount}</div>
           <div className="mt-3">
             <Link className="text-sm text-indigo-600 hover:text-indigo-500" to="/nurses">
@@ -113,42 +113,42 @@ export default function DashboardPage({ user }: Props) {
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="text-xs font-medium text-slate-500">Tekshiruvlar</div>
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
+          <div className="text-xs font-medium text-slate-500 dark:text-slate-400">Tekshiruvlar</div>
           <div className="mt-2 text-3xl font-semibold">{loading ? '-' : examCount ?? '-'}</div>
-          <div className="mt-1 text-xs text-slate-500">Jami tekshiruvlar soni</div>
+          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">Jami tekshiruvlar soni</div>
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
         <div className="flex items-end justify-between gap-4">
           <div>
             <div className="text-base font-semibold">Oxirgi tekshiruvlar</div>
-            <div className="mt-1 text-sm text-slate-600">So'nggi 5 ta tekshiruv</div>
+            <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">So'nggi 5 ta tekshiruv</div>
           </div>
         </div>
 
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[640px] border-collapse">
             <thead>
-              <tr className="text-left text-xs font-medium text-slate-500">
-                <th className="border-b border-slate-200 pb-2">Sana</th>
-                <th className="border-b border-slate-200 pb-2">Hamshira</th>
-                <th className="border-b border-slate-200 pb-2">O'quvchi</th>
+              <tr className="text-left text-xs font-medium text-slate-500 dark:text-slate-400">
+                <th className="border-b border-slate-200 pb-2 dark:border-slate-800">Sana</th>
+                <th className="border-b border-slate-200 pb-2 dark:border-slate-800">Hamshira</th>
+                <th className="border-b border-slate-200 pb-2 dark:border-slate-800">O'quvchi</th>
               </tr>
             </thead>
             <tbody>
               {latestExams.map((e) => (
-                <tr key={`${e.studentId}_${e.examId}`} className="text-sm text-slate-900">
-                  <td className="border-b border-slate-100 py-2 pr-4">{formatExamDate(e)}</td>
-                  <td className="border-b border-slate-100 py-2 pr-4">{formatExamNurse(e)}</td>
-                  <td className="border-b border-slate-100 py-2">
+                <tr key={`${e.studentId}_${e.examId}`} className="text-sm text-slate-900 dark:text-slate-100">
+                  <td className="border-b border-slate-100 py-2 pr-4 dark:border-slate-800/70">{formatExamDate(e)}</td>
+                  <td className="border-b border-slate-100 py-2 pr-4 dark:border-slate-800/70">{formatExamNurse(e)}</td>
+                  <td className="border-b border-slate-100 py-2 dark:border-slate-800/70">
                     <div className="flex items-center gap-2">
                       <Link className="text-indigo-600 hover:text-indigo-500" to={`/students/${e.studentId}`}>
                         {e.studentId}
                       </Link>
                       <Link
-                        className="text-xs text-slate-500 hover:text-slate-700"
+                        className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                         to={`/students/${e.studentId}/exams/${e.examId}`}
                       >
                         Ko'rish
@@ -160,7 +160,7 @@ export default function DashboardPage({ user }: Props) {
 
               {latestExams.length === 0 ? (
                 <tr>
-                  <td className="py-3 text-sm text-slate-600" colSpan={3}>
+                  <td className="py-3 text-sm text-slate-600 dark:text-slate-300" colSpan={3}>
                     Hali tekshiruvlar yo'q.
                   </td>
                 </tr>
