@@ -194,7 +194,7 @@ export default function StudentIllnessHistoryPage() {
             </div>
           </div>
 
-          {error ? <div className="text-sm text-red-600">{error}</div> : null}
+          {error ? <div className="text-sm text-red-600 dark:text-red-300">{error}</div> : null}
 
           <div className="flex items-center gap-2">
             <button

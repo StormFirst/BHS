@@ -124,8 +124,6 @@ export default function StudentExamPage() {
   const [selectedNurseId, setSelectedNurseId] = useState('')
   const [answers, setAnswers] = useState<Record<string, string>>({})
 
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
-
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -135,18 +133,6 @@ export default function StudentExamPage() {
       setLoadingNurses(false)
     })
     return () => unsub()
-  }, [])
-
-  useEffect(() => {
-    setOpenSections((prev) => {
-      if (Object.keys(prev).length > 0) return prev
-      const initial: Record<string, boolean> = {}
-      for (const s of sections) {
-        initial[s.title] = false
-      }
-      if (sections[0]) initial[sections[0].title] = true
-      return initial
-    })
   }, [])
 
   const allFieldNames = useMemo(() => {
@@ -160,10 +146,6 @@ export default function StudentExamPage() {
 
   function setFieldValue(name: string, value: string) {
     setAnswers((prev) => ({ ...prev, [name]: value }))
-  }
-
-  function toggleSection(title: string) {
-    setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }))
   }
 
   async function handleSave() {
@@ -221,26 +203,67 @@ export default function StudentExamPage() {
 
           <div>
             <div className="text-sm font-medium text-slate-900 dark:text-slate-100">Qaysi hamshira tomonidan tekshiruv qilindi</div>
-            <select
-              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:focus:border-indigo-400"
-              value={selectedNurseId}
-              onChange={(e) => setSelectedNurseId(e.target.value)}
-              disabled={saving || loadingNurses}
-            >
-              <option value="">{loadingNurses ? 'Yuklanmoqda...' : 'Tanlang'}</option>
-              {nurses.map((n) => {
-                const label = `${(n.firstName ?? '').trim()} ${(n.lastName ?? '').trim()}`.trim() || 'Hamshira'
-                const nurseId = (n.nurseId ?? '').trim()
-                return (
-                  <option key={n.id} value={n.id}>
-                    {nurseId ? `${nurseId} - ${label}` : label}
-                  </option>
-                )
-              })}
-            </select>
+            {loadingNurses ? (
+              <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">Yuklanmoqda...</div>
+            ) : nurses.length === 0 ? (
+              <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">Hamshiralar topilmadi.</div>
+            ) : (
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {nurses.map((n) => {
+                  const label = `${(n.firstName ?? '').trim()} ${(n.lastName ?? '').trim()}`.trim() || 'Hamshira'
+                  const code = (n.nurseId ?? '').trim()
+                  const selected = selectedNurseId === n.id
+                  return (
+                    <button
+                      key={n.id}
+                      type="button"
+                      disabled={saving}
+                      onClick={() => setSelectedNurseId(n.id)}
+                      className={[
+                        'group w-full rounded-xl border p-4 text-left shadow-sm transition',
+                        'bg-white hover:bg-slate-50 border-slate-200',
+                        'dark:bg-slate-950/30 dark:hover:bg-slate-900/30 dark:border-slate-800',
+                        selected
+                          ? 'ring-2 ring-indigo-500 border-indigo-200 dark:border-indigo-500/40'
+                          : 'ring-0',
+                        saving ? 'opacity-60' : '',
+                      ].join(' ')}
+                      aria-pressed={selected}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+                            {code ? `${code} - ${label}` : label}
+                          </div>
+                          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">Tekshiruvni saqlash uchun tanlang</div>
+                        </div>
+
+                        <div
+                          className={[
+                            'mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border',
+                            selected
+                              ? 'border-indigo-500 bg-indigo-500 text-white'
+                              : 'border-slate-300 bg-white text-transparent dark:border-slate-700 dark:bg-slate-950/30',
+                          ].join(' ')}
+                          aria-hidden="true"
+                        >
+                          <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+                            <path
+                              fillRule="evenodd"
+                              d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.5 7.55a1 1 0 0 1-1.42 0L3.29 9.724a1 1 0 1 1 1.42-1.4l3.37 3.42 6.79-6.84a1 1 0 0 1 1.414-.01Z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
-          {error ? <div className="text-sm text-red-600">{error}</div> : null}
+          {error ? <div className="text-sm text-red-600 dark:text-red-300">{error}</div> : null}
 
           <div className="flex items-center gap-2">
             <button
@@ -255,76 +278,38 @@ export default function StudentExamPage() {
         </div>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         {sections.map((section, idx) => (
           <div key={section.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950/40">
-            <button
-              type="button"
-              className="flex w-full items-center justify-between gap-3 text-left"
-              onClick={() => toggleSection(section.title)}
-            >
-              <div>
-                  <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{`${idx + 1}) ${section.title.replace(/^\d+\)\s*/, '')}`}</div>
-                {section.description ? (
-                    <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">{section.description}</div>
-                ) : null}
-              </div>
+            <div className="flex flex-col gap-1">
+              <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{`${idx + 1}) ${section.title.replace(/^\d+\)\s*/, '')}`}</div>
+              {section.description ? <div className="text-sm text-slate-600 dark:text-slate-300">{section.description}</div> : null}
+            </div>
 
-              <div className="flex items-center gap-2">
-                <div className="text-sm text-slate-500 dark:text-slate-400">{openSections[section.title] ? 'Yopish' : 'Ochish'}</div>
-                <svg
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className={[
-                    'h-5 w-5 text-slate-500 transition-transform duration-200 dark:text-slate-400',
-                    openSections[section.title] ? 'rotate-180' : 'rotate-0',
-                  ].join(' ')}
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-            </button>
-
-            <div
-              className={[
-                'grid transition-all duration-300 ease-in-out',
-                openSections[section.title]
-                  ? 'grid-rows-[1fr] opacity-100 mt-4'
-                  : 'grid-rows-[0fr] opacity-0 mt-0',
-              ].join(' ')}
-            >
-              <div className="overflow-hidden">
-                <div className="grid gap-3">
-                  {section.fields.map((f) => (
-                    <div key={f.name} className="grid gap-1">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{f.name}</div>
-                        {f.note ? <div className="text-xs text-slate-500 dark:text-slate-400">{f.note}</div> : <div />}
-                      </div>
-                      <input
-                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:focus:border-indigo-400"
-                        value={answers[f.name] ?? ''}
-                        onChange={(e) => setFieldValue(f.name, e.target.value)}
-                        disabled={saving}
-                      />
-                    </div>
-                  ))}
-
-                  <div className="grid gap-1">
-                    <div className="text-sm font-medium text-slate-900 dark:text-slate-100">Izoh</div>
-                    <textarea
-                      className="min-h-24 w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:focus:border-indigo-400"
-                      value={answers[sectionNoteKey(section.title)] ?? ''}
-                      onChange={(e) => setFieldValue(sectionNoteKey(section.title), e.target.value)}
-                      disabled={saving}
-                    />
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {section.fields.map((f) => (
+                <div key={f.name} className="grid gap-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{f.name}</div>
+                    {f.note ? <div className="text-xs text-slate-500 dark:text-slate-400">{f.note}</div> : <div />}
                   </div>
+                  <input
+                    className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:focus:border-indigo-400"
+                    value={answers[f.name] ?? ''}
+                    onChange={(e) => setFieldValue(f.name, e.target.value)}
+                    disabled={saving}
+                  />
                 </div>
+              ))}
+
+              <div className="grid gap-1 md:col-span-2">
+                <div className="text-sm font-medium text-slate-900 dark:text-slate-100">Izoh</div>
+                <textarea
+                  className="min-h-24 w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100 dark:focus:border-indigo-400"
+                  value={answers[sectionNoteKey(section.title)] ?? ''}
+                  onChange={(e) => setFieldValue(sectionNoteKey(section.title), e.target.value)}
+                  disabled={saving}
+                />
               </div>
             </div>
           </div>

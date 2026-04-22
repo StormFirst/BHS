@@ -25,6 +25,7 @@ import {
   setDoc,
   limit,
   updateDoc,
+  where,
   type Timestamp,
 } from 'firebase/firestore'
 import {
@@ -94,6 +95,138 @@ export async function addMessage(text: string, user: User) {
     uid: user.uid,
     email: user.email ?? null,
     createdAt: serverTimestamp(),
+  })
+}
+
+export type Subject = {
+  id: string
+  name: string
+  createdAt: Timestamp | null
+}
+
+export type SubjectInput = {
+  name: string
+}
+
+export function listenSubjects(callback: (items: Subject[]) => void) {
+  const q = query(collection(db, 'subjects'), orderBy('createdAt', 'desc'))
+  return onSnapshot(q, (snap) => {
+    const items: Subject[] = snap.docs.map((d) => {
+      const data = d.data() as Omit<Subject, 'id'>
+      return { id: d.id, ...data }
+    })
+    callback(items)
+  })
+}
+
+export async function addSubject(input: SubjectInput) {
+  return addDoc(collection(db, 'subjects'), {
+    name: input.name,
+    createdAt: serverTimestamp(),
+  })
+}
+
+export async function deleteSubject(subjectId: string) {
+  const refDoc = doc(db, 'subjects', subjectId)
+  return deleteDoc(refDoc)
+}
+
+export type Club = {
+  id: string
+  name: string
+  createdAt: Timestamp | null
+}
+
+export type ClubInput = {
+  name: string
+}
+
+export function listenClubs(callback: (items: Club[]) => void) {
+  const q = query(collection(db, 'clubs'), orderBy('createdAt', 'desc'))
+  return onSnapshot(q, (snap) => {
+    const items: Club[] = snap.docs.map((d) => {
+      const data = d.data() as Omit<Club, 'id'>
+      return { id: d.id, ...data }
+    })
+    callback(items)
+  })
+}
+
+export async function addClub(input: ClubInput) {
+  return addDoc(collection(db, 'clubs'), {
+    name: input.name,
+    createdAt: serverTimestamp(),
+  })
+}
+
+export async function deleteClub(clubId: string) {
+  const refDoc = doc(db, 'clubs', clubId)
+  return deleteDoc(refDoc)
+}
+
+export type StudentClubAssignment = {
+  id: string
+  clubId: string
+  clubName: string
+  assignedAt: Timestamp | null
+}
+
+export type StudentClubAssignmentInput = {
+  clubId: string
+  clubName: string
+}
+
+export function listenStudentClubs(
+  studentId: string,
+  callback: (items: StudentClubAssignment[]) => void,
+) {
+  const q = query(collection(db, 'students', studentId, 'clubs'), orderBy('assignedAt', 'desc'))
+  return onSnapshot(q, (snap) => {
+    const items: StudentClubAssignment[] = snap.docs.map((d) => {
+      const data = d.data() as Omit<StudentClubAssignment, 'id'>
+      return { id: d.id, ...data }
+    })
+    callback(items)
+  })
+}
+
+export async function assignClubToStudent(studentId: string, input: StudentClubAssignmentInput) {
+  return addDoc(collection(db, 'students', studentId, 'clubs'), {
+    clubId: input.clubId,
+    clubName: input.clubName,
+    assignedAt: serverTimestamp(),
+  })
+}
+
+export async function removeClubFromStudent(studentId: string, assignmentId: string) {
+  const refDoc = doc(db, 'students', studentId, 'clubs', assignmentId)
+  return deleteDoc(refDoc)
+}
+
+export type ClubStudentRef = {
+  studentId: string
+  assignmentId: string
+  clubId: string
+  clubName: string
+  assignedAt: Timestamp | null
+}
+
+export function listenClubStudents(clubId: string, callback: (items: ClubStudentRef[]) => void) {
+  const q = query(collectionGroup(db, 'clubs'), where('clubId', '==', clubId), orderBy('assignedAt', 'desc'))
+  return onSnapshot(q, (snap) => {
+    const items: ClubStudentRef[] = snap.docs
+      .map((d) => {
+        const studentId = d.ref.parent.parent?.id
+        if (!studentId) return null
+        const data = d.data() as Omit<ClubStudentRef, 'studentId' | 'assignmentId'>
+        return {
+          studentId,
+          assignmentId: d.id,
+          ...data,
+        }
+      })
+      .filter((x): x is ClubStudentRef => Boolean(x))
+    callback(items)
   })
 }
 

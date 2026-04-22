@@ -116,7 +116,14 @@ export default function StudentExamDetailsPage() {
   const [exam, setExam] = useState<StudentExam | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {}
+    for (const s of sections) {
+      initial[s.title] = false
+    }
+    if (sections[0]) initial[sections[0].title] = true
+    return initial
+  })
 
   useEffect(() => {
     if (!id || !examId) return
@@ -126,18 +133,6 @@ export default function StudentExamDetailsPage() {
     })
     return () => unsub()
   }, [id, examId])
-
-  useEffect(() => {
-    setOpenSections((prev) => {
-      if (Object.keys(prev).length > 0) return prev
-      const initial: Record<string, boolean> = {}
-      for (const s of sections) {
-        initial[s.title] = false
-      }
-      if (sections[0]) initial[sections[0].title] = true
-      return initial
-    })
-  }, [])
 
   const header = useMemo(() => {
     if (!exam) return '-'

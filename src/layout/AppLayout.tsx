@@ -57,9 +57,34 @@ function buildBreadcrumbs(pathname: string): Crumb[] {
       return crumbs
     }
 
+    if (b === 'academic-activity') {
+      crumbs.push({ label: 'Akademik faoliyat' })
+      return crumbs
+    }
+
+    if (b === 'clubs') {
+      crumbs.push({ label: "To'garaklar" })
+      return crumbs
+    }
+
+    if (b === 'extra-lessons') {
+      crumbs.push({ label: "Qo'shimcha darslar" })
+      return crumbs
+    }
+
+    if (b === 'portfolio') {
+      crumbs.push({ label: 'Portfolio' })
+      return crumbs
+    }
+
     if (b === 'exams' && c) {
       crumbs.push({ label: 'Tekshiruvlar', to: `/students/${a}/exams` })
       crumbs.push({ label: `Tekshiruv: ${c}` })
+      return crumbs
+    }
+
+    if (b === 'illness-history') {
+      crumbs.push({ label: 'Kasallik tarixi' })
       return crumbs
     }
 
@@ -97,28 +122,24 @@ export default function AppLayout({ user, onLogout }: Props) {
 
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const wasStudentsRoute = useRef(false)
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
   })
 
-  useEffect(() => {
-    const pathname = location.pathname
-    const onStudentsRoute = pathname.startsWith('/students')
-    const onStudentsList = pathname === '/students'
-    const onAddStudent = pathname === '/students/new'
-    const onStudentsInner = pathname.startsWith('/students/') && !onAddStudent
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
+  const avatarMenuRef = useRef<HTMLDivElement | null>(null)
 
-    if (onStudentsInner) {
-      setSidebarOpen(false)
-    } else if (onStudentsRoute && (onStudentsList || onAddStudent)) {
-      setSidebarOpen(true)
-    } else if (wasStudentsRoute.current && !onStudentsRoute) {
-      setSidebarOpen(true)
+  useEffect(() => {
+    function onPointerDown(e: MouseEvent) {
+      if (!avatarMenuRef.current) return
+      if (!avatarMenuRef.current.contains(e.target as Node)) {
+        setAvatarMenuOpen(false)
+      }
     }
 
-    wasStudentsRoute.current = onStudentsRoute
-  }, [location.pathname])
+    document.addEventListener('mousedown', onPointerDown)
+    return () => document.removeEventListener('mousedown', onPointerDown)
+  }, [])
 
   function toggleTheme() {
     const next = theme === 'dark' ? 'light' : 'dark'
@@ -132,6 +153,7 @@ export default function AppLayout({ user, onLogout }: Props) {
   }
 
   const breadcrumbs = buildBreadcrumbs(location.pathname)
+  const isStudentExamPage = /^\/students\/[^/]+\/exam$/.test(location.pathname)
 
   return (
     <div className="relative min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -157,7 +179,7 @@ export default function AppLayout({ user, onLogout }: Props) {
       <div className="flex min-h-screen">
         <aside
           className={[
-            'sticky top-0 hidden h-screen shrink-0 self-start overflow-y-auto overflow-hidden bg-white/90 backdrop-blur md:block dark:bg-slate-950/70',
+            'sticky top-0 z-10 hidden h-screen shrink-0 self-start overflow-y-auto overflow-hidden bg-white/90 backdrop-blur md:block dark:bg-slate-950/70',
             'transition-[width] duration-300 ease-in-out',
             sidebarOpen ? 'w-64 border-r border-slate-200 dark:border-slate-800' : 'w-0 border-r-0',
           ].join(' ')}
@@ -175,7 +197,7 @@ export default function AppLayout({ user, onLogout }: Props) {
               </svg>
             </button>
 
-            <div className="text-base font-semibold">BHS</div>
+            <div className="text-base font-semibold">STEP</div>
             <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">Boshqaruv paneli</div>
           </div>
 
@@ -193,6 +215,12 @@ export default function AppLayout({ user, onLogout }: Props) {
               <NavLink to="/students" end className={navClass}>
                 O'quvchilar ro'yxati
               </NavLink>
+              <NavLink to="/management/subjects" className={navClass}>
+                Fanlar
+              </NavLink>
+              <NavLink to="/management/clubs" className={navClass}>
+                To'garaklar
+              </NavLink>
               <NavLink to="/settings" className={navClass}>
                 Sozlamalar
               </NavLink>
@@ -201,10 +229,10 @@ export default function AppLayout({ user, onLogout }: Props) {
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="border-b border-slate-200 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/65">
-            <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 p-4 md:p-6">
+          <header className="relative z-20 border-b border-slate-200 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/65">
+            <div className="flex w-full items-center justify-between gap-4 p-4 md:p-6">
               <div className="md:hidden">
-                <div className="text-sm font-semibold">BHS</div>
+                <div className="text-sm font-semibold">STEP</div>
               </div>
 
               <nav className="hidden min-w-0 flex-1 md:block" aria-label="Breadcrumb">
@@ -219,7 +247,7 @@ export default function AppLayout({ user, onLogout }: Props) {
                             {c.label}
                           </Link>
                         ) : (
-                          <span className={['truncate', isLast ? 'text-slate-900' : ''].join(' ')}>{c.label}</span>
+                          <span className={['truncate', isLast ? 'text-slate-900 dark:text-slate-100' : ''].join(' ')}>{c.label}</span>
                         )}
                       </li>
                     )
@@ -253,38 +281,68 @@ export default function AppLayout({ user, onLogout }: Props) {
                     </svg>
                   )}
                 </button>
-                <div className="flex items-center gap-3">
-                  {avatarUrl ? (
-                    <img
-                      src={avatarUrl}
-                      alt={name}
-                      className="h-9 w-9 rounded-full border border-slate-200 object-cover dark:border-slate-800"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-semibold text-slate-700 dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-200">
-                      {initials}
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium">{name}</div>
-                    {user.email ? (
-                      <div className="truncate text-xs text-slate-500 dark:text-slate-400">{user.email}</div>
-                    ) : null}
-                  </div>
-                </div>
+                <div className="relative" ref={avatarMenuRef}>
+                  <button
+                    type="button"
+                    className="inline-flex items-center rounded-full border border-slate-200 bg-white/70 p-1 shadow-sm backdrop-blur hover:bg-white dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
+                    onClick={() => setAvatarMenuOpen((v) => !v)}
+                    aria-label="Profil menyusi"
+                  >
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={name}
+                        className="h-8 w-8 rounded-full object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-700 dark:bg-slate-900/70 dark:text-slate-200">
+                        {initials}
+                      </div>
+                    )}
+                  </button>
 
-                <button
-                  className="rounded-md bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
-                  onClick={() => void onLogout()}
-                >
-                  Chiqish
-                </button>
+                  {avatarMenuOpen ? (
+                    <div className="absolute right-0 top-12 z-[1000] w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-950">
+                      <div className="px-4 py-3">
+                        <div className="truncate text-sm font-semibold text-slate-900 dark:text-white">{name}</div>
+                        {user.email ? <div className="truncate text-xs text-slate-500 dark:text-slate-400">{user.email}</div> : null}
+                      </div>
+                      <div className="h-px bg-slate-100 dark:bg-slate-800" />
+                      <div className="p-2">
+                        <Link
+                          to="/settings"
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-900/50"
+                          onClick={() => setAvatarMenuOpen(false)}
+                        >
+                          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-1.41 3.41H18a1.65 1.65 0 0 0-1.54 1.06 1.65 1.65 0 0 1-3.12 0A1.65 1.65 0 0 0 11.8 21H11a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-3.41-1.41V18a1.65 1.65 0 0 0-1.06-1.54 1.65 1.65 0 0 1 0-3.12A1.65 1.65 0 0 0 3 11.8V11a2 2 0 0 1 3.41-1.41l.06.06A1.65 1.65 0 0 0 8.3 10.6a1.65 1.65 0 0 1 3.12 0A1.65 1.65 0 0 0 13.2 11h.8a1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 0 1 19.3 11v.8a1.65 1.65 0 0 0 1.06 1.54 1.65 1.65 0 0 1 0 3.12A1.65 1.65 0 0 0 19.4 15Z" />
+                          </svg>
+                          Sozlamalar
+                        </Link>
+
+                        <button
+                          type="button"
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/30"
+                          onClick={() => void onLogout()}
+                        >
+                          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <path d="M16 17l5-5-5-5" />
+                            <path d="M21 12H9" />
+                          </svg>
+                          Chiqish
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-6">
+          <main className={isStudentExamPage ? 'w-full flex-1 p-4 md:p-6' : 'w-full flex-1 p-4 md:p-6'}>
             <Outlet />
           </main>
         </div>

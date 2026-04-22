@@ -116,7 +116,7 @@ export default function NursesPage() {
 
       {confirmDeleteId ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white p-5 shadow-lg dark:border dark:border-slate-800 dark:bg-slate-950">
+          <div className="w-full rounded-xl bg-white p-5 shadow-lg dark:border dark:border-slate-800 dark:bg-slate-950">
             <div className="text-base font-semibold">Hamshiralarni o‘chirish</div>
             <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">Rostdan ham bu hamshiralarni o‘chirmoqchimisiz?</div>
 

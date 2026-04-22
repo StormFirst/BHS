@@ -131,8 +131,39 @@ export default function StudentsListPage() {
                           openDeleteModal(s.id)
                         }}
                         disabled={deletingId === s.id}
+                        aria-label="O'quvchini o'chirish"
                       >
-                        {deletingId === s.id ? "O'chirilmoqda" : "O'chirish"}
+                        {deletingId === s.id ? (
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="h-4 w-4 animate-spin"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+                          </svg>
+                        ) : (
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <path d="M3 6h18" />
+                            <path d="M8 6V4h8v2" />
+                            <path d="M19 6l-1 14H6L5 6" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                          </svg>
+                        )}
                       </button>
                     </div>
                   </td>
@@ -152,7 +183,7 @@ export default function StudentsListPage() {
       </div>
 
       {confirmDeleteId ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-10">
           <div
             className="absolute inset-0 bg-slate-900/40"
             onClick={(e) => {
@@ -160,7 +191,7 @@ export default function StudentsListPage() {
               return deletingId ? null : setConfirmDeleteId(null)
             }}
           />
-          <div className="relative w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-lg dark:border-slate-800 dark:bg-slate-950">
+          <div className="relative w-full max-w-sm rounded-xl border border-slate-200 bg-white p-5 shadow-lg dark:border-slate-800 dark:bg-slate-950">
             <div className="text-lg font-semibold">O'quvchini o'chirish</div>
             <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
               Rostdan ham o'quvchini o'chirmoqchimisiz? Bu amalni ortga qaytarib bo'lmaydi.
