@@ -164,6 +164,70 @@ export async function deleteClub(clubId: string) {
   return deleteDoc(refDoc)
 }
 
+export type Teacher = {
+  id: string
+  firstName: string
+  lastName: string
+  email: string | null
+  subjectIds: string[]
+  clubIds: string[]
+  createdAt: Timestamp | null
+}
+
+export type TeacherInput = {
+  firstName: string
+  lastName: string
+  email?: string | null
+}
+
+export type TeacherUpdate = {
+  firstName?: string
+  lastName?: string
+  email?: string | null
+  subjectIds?: string[]
+  clubIds?: string[]
+}
+
+export function listenTeachers(callback: (items: Teacher[]) => void) {
+  const q = query(collection(db, 'teachers'), orderBy('createdAt', 'desc'))
+  return onSnapshot(q, (snap) => {
+    const items: Teacher[] = snap.docs.map((d) => {
+      const data = d.data() as Omit<Teacher, 'id'>
+      return {
+        id: d.id,
+        firstName: (data.firstName ?? '').trim(),
+        lastName: (data.lastName ?? '').trim(),
+        email: data.email ?? null,
+        subjectIds: Array.isArray(data.subjectIds) ? data.subjectIds : [],
+        clubIds: Array.isArray(data.clubIds) ? data.clubIds : [],
+        createdAt: data.createdAt ?? null,
+      }
+    })
+    callback(items)
+  })
+}
+
+export async function addTeacher(input: TeacherInput) {
+  return addDoc(collection(db, 'teachers'), {
+    firstName: input.firstName,
+    lastName: input.lastName,
+    email: input.email ?? null,
+    subjectIds: [],
+    clubIds: [],
+    createdAt: serverTimestamp(),
+  })
+}
+
+export async function updateTeacher(teacherId: string, patch: TeacherUpdate) {
+  const refDoc = doc(db, 'teachers', teacherId)
+  return updateDoc(refDoc, patch)
+}
+
+export async function deleteTeacher(teacherId: string) {
+  const refDoc = doc(db, 'teachers', teacherId)
+  return deleteDoc(refDoc)
+}
+
 export type StudentClubAssignment = {
   id: string
   clubId: string

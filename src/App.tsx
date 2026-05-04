@@ -13,6 +13,7 @@ import SettingsPage from './pages/SettingsPage'
 import ClubsManagePage from './pages/ClubsManagePage'
 import ClubDetailsManagePage from './pages/ClubDetailsManagePage'
 import SubjectsManagePage from './pages/SubjectsManagePage'
+import TeachersManagePage from './pages/TeachersManagePage'
 import StudentDetailsPage from './pages/StudentDetailsPage'
 import StudentAcademicActivityPage from './pages/StudentAcademicActivityPage'
 import StudentClubsPage from './pages/StudentClubsPage'
@@ -86,6 +87,7 @@ function App() {
         <Route path="management/clubs" element={<ClubsManagePage />} />
         <Route path="management/clubs/:clubId" element={<ClubDetailsManagePage />} />
         <Route path="management/subjects" element={<SubjectsManagePage />} />
+        <Route path="management/teachers" element={<TeachersManagePage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
